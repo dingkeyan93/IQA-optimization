@@ -2,7 +2,7 @@
 
 This repository re-implemented the existing IQA models with PyTorch, including
 - [SSIM](https://www.cns.nyu.edu/~lcv/ssim/), [MS-SSIM](https://ece.uwaterloo.ca/~z70wang/publications/msssim.html), [CW-SSIM](https://www.mathworks.com/matlabcentral/fileexchange/43017-complex-wavelet-structural-similarity-index-cw-ssim),
-- [FSIM](https://sse.tongji.edu.cn/linzhang/IQA/FSIM/FSIM.htm), [VSI](https://sse.tongji.edu.cn/linzhang/IQA/VSI/VSI.htm),[GMSD](https://www4.comp.polyu.edu.hk/~cslzhang/IQA/GMSD/GMSD.htm),
+- [FSIM](https://sse.tongji.edu.cn/linzhang/IQA/FSIM/FSIM.htm), [VSI](https://sse.tongji.edu.cn/linzhang/IQA/VSI/VSI.htm), [GMSD](https://www4.comp.polyu.edu.hk/~cslzhang/IQA/GMSD/GMSD.htm),
 - [NLPD](https://www.cns.nyu.edu/~lcv/NLPyr/), [MAD](http://vision.eng.shizuoka.ac.jp/mod/url/view.php?id=54),
 - [VIF](https://live.ece.utexas.edu/research/Quality/VIF.htm),
 - [LPIPS](https://github.com/richzhang/PerceptualSimilarity), [DISTS](https://github.com/dingkeyan93/DISTS).
@@ -36,12 +36,13 @@ loss.backward()
 - Single image super-resolution
 - Lossy image compression
 
-For the experiment results, please see [A Comparative Study of Image Quality Assessment Models through Perceptual Optimization](https://arxiv.org/abs/2005.01338)  
+For the experiment results, please see [Comparison of Image Quality Models for Optimization of Image Processing Systems
+](https://arxiv.org/abs/2005.01338)  
 
 ### Citation:
 ```
 @article{ding2020optim,
-  title={A Comparative Study of Image Quality Assessment Models through Perceptual Optimization},
+  title={Comparison of Image Quality Models for Optimization of Image Processing Systems},
   author={Ding, Keyan and Ma, Kede and Wang, Shiqi and Simoncelli, Eero P.},
   journal = {CoRR},
   volume = {abs/2005.01338},
