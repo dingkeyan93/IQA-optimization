@@ -15,7 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 ref_path  = 'images/r0.png'
 pred_path = 'images/r1.png' 
 
-model = DISTS(channels=3).to(device)
+model = SSIM(channels=3).to(device)
 transform = transforms.Compose(
     [
         transforms.ToTensor(),

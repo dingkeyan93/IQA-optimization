@@ -36,16 +36,16 @@ loss.backward()
 - Single image super-resolution
 - Lossy image compression
 
-For the experiment results, please see []()  
+For the experiment results, please see [A Comparative Study of Image Quality Assessment Models through Perceptual Optimization](https://arxiv.org/abs/2005.01338)  
 
 ### Citation:
 ```
 @article{ding2020optim,
-  title={},
+  title={A Comparative Study of Image Quality Assessment Models through Perceptual Optimization},
   author={Ding, Keyan and Ma, Kede and Wang, Shiqi and Simoncelli, Eero P.},
   journal = {CoRR},
-  volume = {abs/},
+  volume = {abs/2005.01338},
   year={2020},
-  url = {https://arxiv.org/abs/}
+  url = {https://arxiv.org/abs/2005.01338}
 }
 ```
