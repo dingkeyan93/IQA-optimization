@@ -36,6 +36,8 @@ loss.backward()
 - Single image super-resolution
 - Lossy image compression
 
+![diagram](images/diagram.svg)
+
 For the experiment results, please see [Comparison of Image Quality Models for Optimization of Image Processing Systems
 ](https://arxiv.org/abs/2005.01338)  
 
