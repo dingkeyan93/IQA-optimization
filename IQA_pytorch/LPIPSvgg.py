@@ -2,7 +2,7 @@ import numpy as np
 import os
 import sys
 import torch
-from torchvision import models,transforms
+from torchvision import models, transforms
 import torch.nn as nn
 import torch.nn.functional as F
 import inspect
@@ -11,16 +11,17 @@ import inspect
 class LPIPSvgg(torch.nn.Module):
     def __init__(self, channels=3):
         # Refer to https://github.com/richzhang/PerceptualSimilarity
-
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         assert channels == 3
         super(LPIPSvgg, self).__init__()
-        vgg_pretrained_features = models.vgg16(pretrained=True).features
+        vgg_pretrained_features = models.vgg16(
+            pretrained=True).features.to(device)
         self.stage1 = torch.nn.Sequential()
         self.stage2 = torch.nn.Sequential()
         self.stage3 = torch.nn.Sequential()
         self.stage4 = torch.nn.Sequential()
         self.stage5 = torch.nn.Sequential()
-        for x in range(0,4):
+        for x in range(0, 4):
             self.stage1.add_module(str(x), vgg_pretrained_features[x])
         for x in range(4, 9):
             self.stage2.add_module(str(x), vgg_pretrained_features[x])
@@ -30,19 +31,26 @@ class LPIPSvgg(torch.nn.Module):
             self.stage4.add_module(str(x), vgg_pretrained_features[x])
         for x in range(23, 30):
             self.stage5.add_module(str(x), vgg_pretrained_features[x])
-    
+
         for param in self.parameters():
             param.requires_grad = False
 
-        self.register_buffer("mean", torch.tensor([0.485, 0.456, 0.406]).view(1,-1,1,1))
-        self.register_buffer("std", torch.tensor([0.229, 0.224, 0.225]).view(1,-1,1,1))
+        self.register_buffer(
+            "mean",
+            torch.tensor([0.485, 0.456, 0.406]).to(device).view(1, -1, 1, 1))
+        self.register_buffer(
+            "std",
+            torch.tensor([0.229, 0.224, 0.225]).to(device).view(1, -1, 1, 1))
 
-        self.chns = [64,128,256,512,512]
-        self.weights = torch.load(os.path.abspath(os.path.join(inspect.getfile(LPIPSvgg),'..','weights/LPIPSvgg.pt')))
+        self.chns = [64, 128, 256, 512, 512]
+        self.weights = torch.load(
+            os.path.abspath(
+                os.path.join(inspect.getfile(LPIPSvgg), '..',
+                             'weights/LPIPSvgg.pt')))
         self.weights = list(self.weights.items())
-        
+
     def forward_once(self, x):
-        h = (x-self.mean)/self.std
+        h = (x - self.mean) / self.std
         h = self.stage1(h)
         h_relu1_2 = h
         h = self.stage2(h)
@@ -62,18 +70,20 @@ class LPIPSvgg(torch.nn.Module):
         assert x.shape == y.shape
         if as_loss:
             feats0 = self.forward_once(x)
-            feats1 = self.forward_once(y)   
+            feats1 = self.forward_once(y)
         else:
             with torch.no_grad():
                 feats0 = self.forward_once(x)
-                feats1 = self.forward_once(y) 
-        score = 0 
+                feats1 = self.forward_once(y)
+        score = 0
         for k in range(len(self.chns)):
-            score = score + (self.weights[k][1]*(feats0[k]-feats1[k])**2).mean([2,3]).sum(1)
+            score = score + (self.weights[k][1] *
+                             (feats0[k] - feats1[k])**2).mean([2, 3]).sum(1)
         if as_loss:
             return score.mean()
         else:
             return score
+
 
 if __name__ == '__main__':
     from PIL import Image
@@ -95,4 +105,3 @@ if __name__ == '__main__':
     score = model(ref, dist, as_loss=False)
     print('score: %.4f' % score.item())
     # score: 0.5435
-
