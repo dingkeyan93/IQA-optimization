@@ -1,13 +1,7 @@
 import torch
 import torch.nn as nn
 from .SteerPyrUtils import *  
-
-if hasattr(torch, 'rfft'):
-    rfft_func = torch.rfft
-elif hasattr(torch.fft, 'rfft'):
-    rfft_func = torch.fft.rfft
-else:
-    raise ModuleNotFoundError("rfft function is not found")
+from utils import rfft, irfft
 
 class SteerablePyramid(nn.Module):
     # refer to https://github.com/LabForComputationalVision/pyrtools
@@ -50,7 +44,7 @@ class SteerablePyramid(nn.Module):
 
     def forward(self, x):
 
-        fftfull = rfft_func(x,2)
+        fftfull = rfft(x,2)
         xreal = fftfull[... , 0]
         xim = fftfull[... ,1]
         x = torch.cat((xreal.unsqueeze(1), xim.unsqueeze(1)), 1 ).unsqueeze( -3 )
@@ -81,7 +75,7 @@ class SteerablePyramid(nn.Module):
             output[n] = torch.index_select( output[n], -2, self.indB[n] )
             sig_size = [output[n].shape[-2],(output[n].shape[-1]-1)*2]
             output[n] = torch.stack((output[n].select(1,0), output[n].select(1,1)),-1)
-            output[n] = torch.irfft( output[n], 2, signal_sizes = sig_size)
+            output[n] = irfft( output[n], 2, signal_sizes = sig_size)
 
         if self.includeHF:
             output.insert( 0, output[0].narrow( -3, 0, 1                    ) )
