@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from .SteerPyrUtils import *  
-from utils import rfft, irfft
+from .utils import rfft, irfft
 
 class SteerablePyramid(nn.Module):
     # refer to https://github.com/LabForComputationalVision/pyrtools
