@@ -5,6 +5,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 
+if hasattr(torch, 'rfft'):
+    rfft = torch.rfft
+elif hasattr(torch.fft, 'rfft'):
+    rfft = torch.fft.rfft
+else:
+    raise ModuleNotFoundError("rfft function is not found")
 
 def abs(x):
     return torch.sqrt(x[:,:,:,:,0]**2+x[:,:,:,:,1]**2+1e-12)
