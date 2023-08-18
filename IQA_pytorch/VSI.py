@@ -8,6 +8,13 @@ from numpy.fft import ifftshift
 import math
 from .utils import abs, real, imag, spatial_normalize, downsample, prepare_image
 
+if hasattr(torch, 'rfft'):
+    rfft_func = torch.rfft
+elif hasattr(torch.fft, 'rfft'):
+    rfft_func = torch.fft.rfft
+else:
+    raise ModuleNotFoundError("rfft function is not found")
+
 eps = 1e-12
 
 def logGabor(rows,cols,omega0,sigmaF):
@@ -72,9 +79,9 @@ def SDSP(img,sigmaF,omega0,sigmaD,sigmaC):
 
     lab = rgb_to_lab_NCHW(img/255)
     LChannel, AChannel, BChannel = lab[:,0,:,:].unsqueeze(1),lab[:,1,:,:].unsqueeze(1),lab[:,2,:,:].unsqueeze(1)
-    LFFT = torch.rfft(LChannel,2,onesided=False)
-    AFFT = torch.rfft(AChannel,2,onesided=False)
-    BFFT = torch.rfft(BChannel,2,onesided=False)
+    LFFT = rfft_func(LChannel,2,onesided=False)
+    AFFT = rfft_func(AChannel,2,onesided=False)
+    BFFT = rfft_func(BChannel,2,onesided=False)
     
     LG = logGabor(rows,cols,omega0,sigmaF)
     LG = torch.from_numpy(LG).reshape(1, 1, rows,cols,1).repeat(B,1,1,1,2).float().to(img.device)
