@@ -11,6 +11,13 @@ elif hasattr(torch.fft, 'rfft'):
     rfft = torch.fft.rfft
 else:
     raise ModuleNotFoundError("rfft function is not found")
+    
+if hasattr(torch, 'irfft'):
+    irfft = torch.rfft
+elif hasattr(torch.fft, 'irfft'):
+    irfft = torch.fft.rfft
+else:
+    raise ModuleNotFoundError("irfft function is not found")
 
 def abs(x):
     return torch.sqrt(x[:,:,:,:,0]**2+x[:,:,:,:,1]**2+1e-12)
