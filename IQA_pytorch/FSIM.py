@@ -8,7 +8,7 @@ import torch.nn.functional as F
 import inspect
 from numpy.fft import fft2, ifft2, fftshift, ifftshift
 import math
-from .utils import abs, real, imag, downsample
+from .utils import abs, real, imag, downsample, rfft
 
 def lowpassfilter(size, cutoff, n):
     """
@@ -78,7 +78,7 @@ def phasecong2(im):
     thetaSigma = np.pi/norient/dThetaOnSigma
 
     _, _, rows,cols = im.shape
-    imagefft = torch.rfft(im,2,onesided=False)
+    imagefft = rfft(im,2,onesided=False)
     
     lp = lowpassfilter((rows,cols),.45,15)
 
