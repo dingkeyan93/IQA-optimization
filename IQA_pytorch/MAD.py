@@ -10,6 +10,13 @@ from numpy.fft import fft2, ifft2, fftshift, ifftshift
 import math
 from .utils import abs, real, imag, downsample, batch_fftshift2d, batch_ifftshift2d
 
+if hasattr(torch, 'rfft'):
+    rfft_func = torch.rfft
+elif hasattr(torch.fft, 'rfft'):
+    rfft_func = torch.fft.rfft
+else:
+    raise ModuleNotFoundError("rfft function is not found")
+
 MAX = nn.MaxPool2d((2,2), stride=1, padding=1)
 
 def extract_patches_2d(img, patch_shape=[64, 64], step=[27,27], batch_first=False, keep_last_patch=False):
@@ -113,11 +120,11 @@ def hi_index(ref_img, dst_img):
 
     csf = make_csf(H, W, 32)
     csf = torch.from_numpy(csf.reshape(1,1,H,W,1)).float().repeat(1,C,1,1,2).to(ref.device)
-    x = torch.rfft(ref, 2, onesided=False)
+    x = rfft_func(ref, 2, onesided=False)
     x1 = batch_fftshift2d(x)
     x2 = batch_ifftshift2d( x1 * csf )
     ref = real(torch.ifft(x2,2))
-    x = torch.rfft(dst, 2, onesided=False)
+    x = rfft_func(dst, 2, onesided=False)
     x1 = batch_fftshift2d(x)
     x2 = batch_ifftshift2d( x1 * csf )
     dst = real(torch.ifft(x2,2))
@@ -165,7 +172,7 @@ def gaborconvolve(im):
     dThetaOnSigma   = 1.5    #Ratio of angular interval between filter orientations
 
     B, C, rows, cols = im.shape
-    imagefft    = torch.rfft(im,2, onesided=False)            # Fourier transform of image
+    imagefft    = rfft_func(im,2, onesided=False)            # Fourier transform of image
 
     # Pre-compute to speed up filter construction
     x = np.ones((rows,1)) * np.arange(-cols/2.,(cols/2.))/(cols/2.)
